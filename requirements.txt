@@ -1,9 +1,6 @@
 streamlit==0.89.0
-torch==1.5
-transformers==3.5.0
-emoji==1.6.1
 pythainlp==2.3.2
-shap==0.40.0
 matplotlib==3.5.0
-thai2transformers==0.1.2
-sentencepiece
+emoji==1.6.1
+pandas
+numpy
