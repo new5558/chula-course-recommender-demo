@@ -1,0 +1,15 @@
+version: "3.8"
+
+services:
+  streamlit:
+    build:
+      context: .
+    ports:
+      - 8501:8501
+    working_dir: /work
+    volumes:
+      - ./src:/work:cached
+      - ./course_features:/work/course_features:cached
+    container_name: streamlit-container
+    environment:
+      - DEVELOPMENT=True
