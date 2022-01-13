@@ -43,7 +43,6 @@ def load_features_array_2() -> npt.NDArray[np.float64]:
     features = np.concatenate((dict_data_2, dict_data_3), axis=0)
     return features
 
-    
 
 @st.cache()
 def load_texts_array() -> List[str]:
@@ -58,7 +57,7 @@ def load_course_dataframe(process_description_thai) -> pd.DataFrame:
 
 @st.cache()
 def generate_courses_key_index(all_courses_key: List[str]) \
-     -> typing.TypedDict('Key index', key=str, index=int):
+     -> dict[str, int]:
     dict = {}
     for i in range(len(all_courses_key)):
         key = all_courses_key[i].strip()
