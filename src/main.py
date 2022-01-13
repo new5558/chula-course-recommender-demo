@@ -1,6 +1,5 @@
 import streamlit as st
 import streamlit.components.v1 as components
-from thai2transformers.preprocess import process_transformers
 import requests
 import numpy as np
 import numpy.typing as npt
@@ -8,22 +7,8 @@ import pandas as pd
 import os
 import typing
 from typing import List
-import sentencepiece as spm
 
 max_token_length = 508
-
-def tokenize_transformers(text, sp: spm.SentencePieceProcessor):
-  return sp.encode(process_transformers(text), out_type=str)
-
-def replace_long_sentence(text, sp: spm.SentencePieceProcessor):
-    return ''.join(tokenize_transformers(text, sp)[0:max_token_length]).replace('▁', '').strip()
-
-def create_process_description_thai(sp: spm.SentencePieceProcessor):
-    def process_description_thai(text):
-        course_description_trimmed = replace_long_sentence(text, sp)
-        course_description_processed = process_transformers(course_description_trimmed).strip()
-        return course_description_processed
-    return process_description_thai
 
 def aggregate_features_array(array1: npt.NDArray[np.float64], array2: npt.NDArray[np.float64]):
     features = np.concatenate((array1, array2), axis=0)
@@ -50,10 +35,9 @@ def load_texts_array() -> List[str]:
     return texts.values.tolist()
 
 @st.cache()
-def load_course_dataframe(process_description_thai) -> pd.DataFrame:
+def load_course_dataframe() -> pd.DataFrame:
     courses_df = pd.read_csv('./course_features/courses_recommender_demo.csv', index_col=0)
-    courses_df['description_thai_key'] = courses_df['description_thai'].apply(process_description_thai)
-    return courses_df[['course_no', 'course_name_thai', 'description_thai', 'description_thai_key']]
+    return courses_df[['course_no', 'course_name_thai', 'description_thai']]
 
 @st.cache()
 def generate_courses_key_index(all_courses_key: List[str]) \
@@ -64,11 +48,6 @@ def generate_courses_key_index(all_courses_key: List[str]) \
         dict[key] = i
 
     return dict
-
-@st.cache()
-def load_sentence_pie():
-    sp = spm.SentencePieceProcessor(model_file='model/sentencepiece.bpe.model')
-    return sp
 
 
 def main():
@@ -81,14 +60,12 @@ def main():
     st.write("![github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)  [Project's repo](https://github.com/new5558/chula-course-recommender-demo)")
     st.title(title)
     
-    sp = load_sentence_pie()
 
-    process_description_thai = create_process_description_thai(sp)
     all_courses_key = load_texts_array()
     courses_features_1 = load_features_array_1()
     courses_features_2 = load_features_array_2()
     all_courses_features, all_courses_features_norm = aggregate_features_array(courses_features_1, courses_features_2)
-    courses_df = load_course_dataframe(process_description_thai)
+    courses_df = load_course_dataframe()
 
     courses_key_index = generate_courses_key_index(all_courses_key)
 
@@ -110,12 +87,11 @@ def main():
 
         search_result = result[result['course_no'] == course_no]
 
-        course_description_key = search_result['description_thai_key'].iloc[0]
         course_description = search_result['description_thai'].iloc[0]
 
         st.write(course_description)
         
-        course_key = courses_key_index[course_description_key]
+        course_key = courses_key_index[course_description]
         
         query_vector = all_courses_features[course_key].reshape((1, -1))
         dot_product = np.dot(query_vector, all_courses_features.T)
@@ -128,11 +104,11 @@ def main():
         
         best_courses = pd.DataFrame()
         for key in best_keys:
-            row = courses_df[courses_df['description_thai_key'] == key]
+            row = courses_df[courses_df['description_thai'] == key]
             best_courses = best_courses.append(row)
         
         best_courses = pd.concat([best_courses.reset_index(), scores], axis = 1)
-        best_courses = best_courses.drop(['description_thai_key', 'index'], axis = 1)
+        best_courses = best_courses.drop(['index'], axis = 1)
         
         st.table(best_courses)
 
