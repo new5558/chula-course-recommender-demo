@@ -5,4 +5,3 @@ emoji==1.6.1
 pandas
 numpy
 sentencepiece
-thai2transformers

@@ -25,15 +25,25 @@ def create_process_description_thai(sp: spm.SentencePieceProcessor):
         return course_description_processed
     return process_description_thai
 
+def aggregate_features_array(array1: npt.NDArray[np.float64], array2: npt.NDArray[np.float64]):
+    features = np.concatenate((array1, array2), axis=0)
+    return features, np.linalg.norm(features, axis = 1) 
+
 @st.cache()
-def load_features_array() -> npt.NDArray[np.float64]:
+def load_features_array_1() -> npt.NDArray[np.float64]:
     dict_data_0 = np.load('./course_features/features_array_0.npz')['arr_0']
     dict_data_1 = np.load('./course_features/features_array_1.npz')['arr_0']
+    features = np.concatenate((dict_data_0, dict_data_1), axis=0)
+    return features
+
+@st.cache() 
+def load_features_array_2() -> npt.NDArray[np.float64]:
     dict_data_2 = np.load('./course_features/features_array_2.npz')['arr_0']
     dict_data_3 = np.load('./course_features/features_array_3.npz')['arr_0']
+    features = np.concatenate((dict_data_2, dict_data_3), axis=0)
+    return features
 
-    features = np.concatenate((dict_data_0, dict_data_1, dict_data_2, dict_data_3), axis=0)
-    return features, np.linalg.norm(features, axis = 1) 
+    
 
 @st.cache()
 def load_texts_array() -> List[str]:
@@ -61,19 +71,6 @@ def load_sentence_pie():
     sp = spm.SentencePieceProcessor(model_file='model/sentencepiece.bpe.model')
     return sp
 
-# @st.cache(allow_output_mutation=True, suppress_st_warning=True, max_entries=1, hash_funcs={Tokenizer: hash_tokenizer, AddedToken: hash_tokenizer})
-# def load_pipeline():
-    
-#     is_development = bool(os.environ.get('DEVELOPMENT'))
-#     model_path = "./model" if is_development else 'new5558/wangchan-course'
-#     model = AutoModelForSequenceClassification.from_pretrained(model_path)
-#     tokenizer = AutoTokenizer.from_pretrained(model_path)
-
-#     pipeline = TextClassificationPipeline(model = model, tokenizer = tokenizer)
-
-#     return pipeline, model.config
-
-
 
 def main():
     if 'button_sent' not in st.session_state:
@@ -89,7 +86,9 @@ def main():
 
     process_description_thai = create_process_description_thai(sp)
     all_courses_key = load_texts_array()
-    all_courses_features, all_courses_features_norm = load_features_array()
+    courses_features_1 = load_features_array_1()
+    courses_features_2 = load_features_array_2()
+    all_courses_features, all_courses_features_norm = aggregate_features_array(courses_features_1, courses_features_2)
     courses_df = load_course_dataframe(process_description_thai)
 
     courses_key_index = generate_courses_key_index(all_courses_key)
@@ -135,7 +134,8 @@ def main():
         
         best_courses = pd.concat([best_courses.reset_index(), scores], axis = 1)
         best_courses = best_courses.drop(['description_thai_key', 'index'], axis = 1)
-        st.dataframe(best_courses, width=2000)
+        
+        st.table(best_courses)
 
 if __name__ == "__main__":
     main()
