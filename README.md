@@ -9,7 +9,8 @@ Course recommender system by content based filtering method demo application. Ba
 ![image](https://user-images.githubusercontent.com/12471844/149357870-79eae41a-122e-45fa-a533-5962aed63991.png)
 
 ## Method
-I trained [sentences-transformers](https://www.sbert.net/) to create courses pair embedding vectors then calculate simialrity from vectors. The embedding model used course description as its input sentences.
+I trained [sentences-transformers](https://www.sbert.net/) to create courses pair embedding vectors then calculate simialrity from vectors. The embedding model used course description as its input sentences.    
+![image](https://user-images.githubusercontent.com/12471844/149375295-ab65c387-7ae6-49ee-a7e5-df916156e04b.png)
 ### Data, Training, and Similarity calculation
 I used courses description and study program provided publicly from [Academic Chula website](http://www.academic.chula.ac.th/search/) The following rules are used to inferred the similarity between courses pair.
 
