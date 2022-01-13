@@ -130,7 +130,6 @@ def main():
         for key in best_keys:
             row = courses_df[courses_df['description_thai_key'] == key]
             best_courses = best_courses.append(row)
-        best_courses = best_courses.set_index('description_thai_key')
         
         best_courses = pd.concat([best_courses.reset_index(), scores], axis = 1)
         best_courses = best_courses.drop(['description_thai_key', 'index'], axis = 1)
