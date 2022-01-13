@@ -56,7 +56,6 @@ def main():
     title = "Chula Course Recommendation demo"
     
     st.set_page_config(page_title=title, page_icon="🎓", layout="wide")
-    # _, center_column, __ = st.columns((1, 2, 1))
     st.write("![github](https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white)  [Project's repo](https://github.com/new5558/chula-course-recommender-demo)")
     st.title(title)
     
