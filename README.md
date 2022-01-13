@@ -1,5 +1,5 @@
 # chula-course-recommender-demo
-Course recommender system by content based filtering method demo application. This project is a part of Data team at www.cugetreg.com
+Course recommender system by content based filtering method demo application. This project is a part of Data team experiments at www.cugetreg.com
 
 ## Run project on localhost
 `docker-compose up`
@@ -29,4 +29,4 @@ The course embedding model is evaluated by using faculty prediction task. the mo
 - In reality, the prefered year listed in courses number can slightly deviate from actual year student have to register by one or two. This is because curriculum revised and some class are likned with multiple study programs. With this knowledge, we may able to revise the course simialirty calculation rules by scaling preffered year difference as simiality score. For example, course with same year and study program will have highest simialirty score while score with small year difference but same study program will have slightly lower similarity score in order.
 - Another way to improve infered simialrity score is to model the relationship between study programs. This is based on the notion that people taken similar program should interest in similar courses.
 - The current model is trained on 90% or all courses data due to train test split rules. We should train model with all courses.
-- The downsampling technique used in training is very naive. We can intuitively select negative sample for training using many computer vision technique ex. [Online and Offline tripet mining](https://omoindrot.github.io/triplet-loss).
+- The downsampling technique used in training is scalable in large samples. We can intuitively select negative sample for training using various Computer Vision techniques ex. [Online and Offline tripet mining](https://omoindrot.github.io/triplet-loss).
