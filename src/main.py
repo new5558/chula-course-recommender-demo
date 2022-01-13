@@ -31,15 +31,15 @@ def aggregate_features_array(array1: npt.NDArray[np.float64], array2: npt.NDArra
 
 @st.cache()
 def load_features_array_1() -> npt.NDArray[np.float64]:
-    dict_data_0 = np.load('./course_features/features_array_0.npz')['arr_0']
-    dict_data_1 = np.load('./course_features/features_array_1.npz')['arr_0']
+    dict_data_0 = np.load('./course_features/features_train_array_0.npz')['arr_0']
+    dict_data_1 = np.load('./course_features/features_train__1.npz')['arr_0']
     features = np.concatenate((dict_data_0, dict_data_1), axis=0)
     return features
 
 @st.cache() 
 def load_features_array_2() -> npt.NDArray[np.float64]:
-    dict_data_2 = np.load('./course_features/features_array_2.npz')['arr_0']
-    dict_data_3 = np.load('./course_features/features_array_3.npz')['arr_0']
+    dict_data_2 = np.load('./course_features/features_train__2.npz')['arr_0']
+    dict_data_3 = np.load('./course_features/features_train__3.npz')['arr_0']
     features = np.concatenate((dict_data_2, dict_data_3), axis=0)
     return features
 
@@ -130,6 +130,7 @@ def main():
         for key in best_keys:
             row = courses_df[courses_df['description_thai_key'] == key]
             best_courses = best_courses.append(row)
+        best_courses = best_courses.set_index('description_thai_key')
         
         best_courses = pd.concat([best_courses.reset_index(), scores], axis = 1)
         best_courses = best_courses.drop(['description_thai_key', 'index'], axis = 1)
