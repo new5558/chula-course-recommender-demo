@@ -10,6 +10,7 @@ services:
     volumes:
       - ./src:/work:cached
       - ./course_features:/work/course_features:cached
+      - ./model:/work/model:cached
     container_name: streamlit-container
     environment:
       - DEVELOPMENT=True
